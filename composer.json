@@ -1,11 +1,18 @@
 {
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "http://packages.firegento.com"
-        }
-    ],
-    "extra":{
-        "magento-root-dir": "/"
-    }
+	"minimum-stability": "dev",
+	"require": {
+		"phpunit/phpunit": "3.*",
+		"n98/magerun": "*",
+		"twig/twig": "1.*",
+		"fbrnc/aoe_templatehints": "dev-master"
+	},
+	"repositories": [
+		{
+			"type": "composer",
+			"url": "http://packages.firegento.com",
+		}
+	],
+	"extra": {
+		"magento-root-dir": "./"
+	}
 }
