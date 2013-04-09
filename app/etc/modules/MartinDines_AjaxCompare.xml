@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <MartinDines_AjaxCompare>
+            <active>true</active>
+            <codePool>local</codePool>
+        </MartinDines_AjaxCompare>
+    </modules>
+</config>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <MartinDines_AjaxCompare>
+            <version>0.0.1</version>
+        </MartinDines_AjaxCompare>
+    </modules>
+    <global>
+        <blocks>
+            <martindines_ajaxcompare>
+                <class>MartinDines_AjaxCompare_Block</class>
+            </martindines_ajaxcompare>
+        </blocks>
+        <models>
+            <martindines_ajaxcompare>
+                <class>MartinDines_AjaxCompare_Model</class>
+            </martindines_ajaxcompare>
+        </models>
+        <helpers>
+            <martindines_ajaxcompare>
+                <class>MartinDines_AjaxCompare_Helper</class>
+            </martindines_ajaxcompare>
+        </helpers>
+    </global>
+</config>
