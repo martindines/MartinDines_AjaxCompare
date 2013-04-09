@@ -9,7 +9,7 @@
 	"repositories": [
 		{
 			"type": "composer",
-			"url": "http://packages.firegento.com",
+			"url": "http://packages.firegento.com"
 		}
 	],
 	"extra": {
