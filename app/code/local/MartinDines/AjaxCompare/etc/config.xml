@@ -22,4 +22,13 @@
             </martindines_ajaxcompare>
         </helpers>
     </global>
+    <frontend>
+        <layout>
+            <updates>
+                <martindines_ajaxcompare>
+                    <file>martindines_ajaxcompare.xml</file>
+                </martindines_ajaxcompare>
+            </updates>
+        </layout>
+    </frontend>
 </config>

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<layout version="0.0.1">
+    <catalog_product_view>
+        <!--<block type="catalog/product_view" name="product.info.addto" as="addto" template="catalog/product/view/addto.phtml"/>-->
+        <reference name="product.info.addto">
+            <action method="setTemplate">
+                <template>martindines_ajaxcompare/catalog/product/view/addto.phtml</template>
+            </action>
+        </reference>
+    </catalog_product_view>
+</layout>
