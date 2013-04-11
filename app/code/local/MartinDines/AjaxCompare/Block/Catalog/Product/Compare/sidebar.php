@@ -1,6 +1,0 @@
-<?php
-
-class MartinDines_AjaxCompare_Block_Catalog_Product_Compare_Sidebar extends Mage_Catalog_Block_Product_Compare_Sidebar
-{
-
-}
