@@ -1,3 +1,17 @@
+<!--
+Guys heres the plan:
+
+1) Intercept all 'clicks' on Add to compare, remove from compare etc
+2) With those clicks, fire ajax events
+
+3) Wrap the core/messages html so it is updatable via ajax (somehow)
+
+4) When one of the intercepted clicks is fired, make the request via ajax
+5) On response of that request update the core/messages (come to think of it, we can just get the message blocks html
+output and add it ourselves..
+
+6) Make the compare in sidebar update via ajax
+-->
 <?xml version="1.0"?>
 <config>
     <modules>
