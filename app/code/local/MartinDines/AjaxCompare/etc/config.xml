@@ -30,5 +30,14 @@
                 </martindines_ajaxcompare>
             </updates>
         </layout>
+        <routers>
+            <catalog>
+                <args>
+                    <modules>
+                        <MartinDines_AjaxCompare before="Mage_Catalog">MartinDines_AjaxCompare</MartinDines_AjaxCompare>
+                    </modules>
+                </args>
+            </catalog>
+        </routers>
     </frontend>
 </config>
