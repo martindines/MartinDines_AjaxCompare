@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!--
 Guys heres the plan:
 
@@ -12,7 +13,6 @@ output and add it ourselves..
 
 6) Make the compare in sidebar update via ajax
 -->
-<?xml version="1.0"?>
 <config>
     <modules>
         <MartinDines_AjaxCompare>
@@ -24,6 +24,11 @@ output and add it ourselves..
             <martindines_ajaxcompare>
                 <class>MartinDines_AjaxCompare_Block</class>
             </martindines_ajaxcompare>
+            <core>
+                <rewrite>
+                    <messages>MartinDines_AjaxCompare_Block_Messages</messages>
+                </rewrite>
+            </core>
         </blocks>
         <models>
             <martindines_ajaxcompare>
