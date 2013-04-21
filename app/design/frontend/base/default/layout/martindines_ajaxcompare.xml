@@ -11,6 +11,9 @@
             </action>
         </reference>
     </default>
+    <catalog_product_compare_get_sidebar_compare>
+        <block type="catalog/product_compare_sidebar" name="catalog.compare.sidebar" template="catalog/product/compare/sidebar.phtml"/>
+    </catalog_product_compare_get_sidebar_compare>
     <catalog_category_default>
         <reference name="product_list">
             <action method="setTemplate">
