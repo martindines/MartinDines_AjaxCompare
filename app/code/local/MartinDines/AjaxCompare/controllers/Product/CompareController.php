@@ -11,19 +11,13 @@ class MartinDines_AjaxCompare_Product_CompareController extends Mage_Catalog_Pro
         $this->loadLayoutUpdates()->generateLayoutXml()->generateLayoutBlocks();
     }
 
-    private function _sessionWriteClose()
-    {
-        session_write_close();
-    }
-
     public function get_messagesAction()
     {
         $this->_initCustomHandler();
         $this->_initLayoutMessages('catalog/session');
 
         if ($this->getRequest()->isXmlHttpRequest()) {
-            $messagesBlock = $this->getLayout()->getMessagesBlock();
-            $this->_sessionWriteClose();
+            $messagesBlock = $this->getLayout()->getMessagesBlock();]
             echo $messagesBlock->getGroupedHtml();
         } else {
             $this->getResponse()->setHeader('HTTP/1.1','403 Forbidden');
@@ -35,8 +29,7 @@ class MartinDines_AjaxCompare_Product_CompareController extends Mage_Catalog_Pro
     public function get_sidebar_compareAction()
     {
         $this->_initCustomHandler();
-        $this->_sessionWriteClose();
-
+        
         if ($this->getRequest()->isXmlHttpRequest()) {
             $messagesBlock = $this->getLayout()->getBlock('catalog.compare.sidebar');
             echo $messagesBlock->toHtml();
