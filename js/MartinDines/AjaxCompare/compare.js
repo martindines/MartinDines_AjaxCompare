@@ -21,7 +21,6 @@ MartinDines.events = (function () {
             this._listeners[type].push(listener);
         },
 
-        // @todo be able to pass data to listeners
         fire: function(event) {
             if (typeof event == "string") {
                 event = { type: event };
@@ -116,16 +115,13 @@ MartinDines.AjaxCompare = (function() {
                 if (this.readyState == 3) { console.log('request in progress'); }
                 if (this.readyState == 4) {
                     if (this.status == 200) {
-                        Events.fire('MartinDines_AjaxCompare_getMessages_Success');
+                        var XHRReponse = this.responseText;
+                        Events.fire({type: 'MartinDines_AjaxCompare_getMessages_Success', data: XHRReponse});
                     } else {
                         Events.fire('MartinDines_AjaxCompare_getMessages_Error');
                     }
                 }
             }
-        },
-
-        getMessagesCallback: function() {
-            // @todo Use this as a call back after ajax has completed? Or use event
         },
 
         init: function() {
@@ -146,8 +142,8 @@ AjaxCompare.setEventHandler(EventHandler);
 AjaxCompare.setXHRHandler(XHRHandler);
 
 // This handler is to update message box when a product has been added
-EventHandler.addListener('MartinDines_AjaxCompare_AddToCompareSuccess', function() {
-    var messageHtml = AjaxCompare.getMessages();
+EventHandler.addListener('MartinDines_AjaxCompare_getMessages_Success', function(event) {
+    var messageHtml = event.data;
     console.log(messageHtml);
     if (messageHtml) {
         var message_container = AjaxCompare.getMessageContainerElement();
