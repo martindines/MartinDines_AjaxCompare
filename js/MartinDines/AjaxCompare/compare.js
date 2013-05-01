@@ -83,14 +83,17 @@ MartinDines.utils.XMLHttpRequest = (function() {
  */
 MartinDines.AjaxCompare = (function() {
     var XHR_Handler, Event_Handler;
-    var message_container_id = 'messages-container';
-    var sidebar_compare_container_id = 'block-compare';
-    var message_ajax_url = location.protocol + "//" + location.host + '/catalog/product_compare/get_messages';
-    var sidebar_compare_ajax_url = location.protocol + "//" + location.host + '/catalog/product_compare/get_sidebar_compare';
 
     return {
+        settings: {
+            message_ajax_url: location.protocol + "//" + location.host + '/catalog/product_compare/get_messages',
+            message_container_id: 'messages-container',
+            sidebar_compare_ajax_url: location.protocol + "//" + location.host + '/catalog/product_compare/get_sidebar_compare',
+            sidebar_compare_container_class: 'block-compare'
+        },
+
         getXHRHandler: function() {
-            return XHR_Handler;
+        return XHR_Handler;
         },
 
         setXHRHandler: function(handler) {
@@ -106,17 +109,17 @@ MartinDines.AjaxCompare = (function() {
         },
 
         getMessageContainerElement: function() {
-            return document.getElementById(message_container_id);
+            return document.getElementById(this.settings.message_container_id);
         },
 
         getSidebarCompareContainerElement: function() {
-            return document.getElementById(sidebar_compare_container_id);
+            return document.getElementById(this.settings.sidebar_compare_container_id);
         },
 
         getMessages: function() {
             var XHR = new XHR_Handler;
             var Events = Event_Handler;
-            var URL = message_ajax_url;
+            var URL = this.settings.message_ajax_url;
 
             XHR.open('GET', URL, true);
             XHR.setRequestHeader("X-Requested-With", "XMLHttpRequest");
@@ -163,10 +166,63 @@ MartinDines.AjaxCompare = (function() {
             return false;
         },
 
+        removeProductFromCompare: function() {
+            var XHR = new XHR_Handler;
+            var Events = Event_Handler;
+            var element = this;
+
+            XHR.open('POST', element.href, true);
+            XHR.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+            XHR.send();
+
+            console.log(element.href);
+            XHR.onreadystatechange = function() {
+                if (this.readyState == 2) { console.log('request made, headers available'); }
+                if (this.readyState == 3) { console.log('request in progress'); }
+                if (this.readyState == 4) {
+                    // JSON is ie8+ .. check how magento handles responses and use their method
+                    var XHRResponse = JSON.parse(this.responseText)
+                    if ((this.status == 200) && (XHRResponse.success == true)) {
+                        Events.fire({type: 'MartinDines_AjaxCompare_removeProductFromCompare_Success', data: XHRResponse});
+                    } else {
+                        Events.fire('MartinDines_AjaxCompare_removeProductFromCompare_Failure');
+                    }
+                }
+            }
+            return false;
+        },
+
+        removeAllProductsFromCompare: function() {
+            // @todo this is a straight up duplicate of removeProductFromCompare. I'm not sure how to alias it whilst keeping context of 'this'
+            var XHR = new XHR_Handler;
+            var Events = Event_Handler;
+            var element = this;
+
+            XHR.open('GET', element.href, true);
+            XHR.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+            XHR.send();
+
+            console.log(element.href);
+            XHR.onreadystatechange = function() {
+                if (this.readyState == 2) { console.log('request made, headers available'); }
+                if (this.readyState == 3) { console.log('request in progress'); }
+                if (this.readyState == 4) {
+                    // JSON is ie8+ .. check how magento handles responses and use their method
+                    var XHRResponse = JSON.parse(this.responseText)
+                    if ((this.status == 200) && (XHRResponse.success == true)) {
+                        Events.fire({type: 'MartinDines_AjaxCompare_removeAllProductsFromCompare_Success', data: XHRResponse});
+                    } else {
+                        Events.fire('MartinDines_AjaxCompare_removeAllProductsFromCompare_Failure');
+                    }
+                }
+            }
+            return false;
+        },
+
         getSidebarCompare: function() {
             var XHR = new XHR_Handler;
             var Events = Event_Handler;
-            var URL = sidebar_compare_ajax_url;
+            var URL = this.settings.sidebar_compare_ajax_url;
 
             XHR.open('GET', URL, true);
             XHR.setRequestHeader("X-Requested-With", "XMLHttpRequest");
@@ -181,19 +237,75 @@ MartinDines.AjaxCompare = (function() {
                         var XHRReponse = this.responseText;
                         Events.fire({type: 'MartinDines_AjaxCompare_getSidebarCompare_Success', data: XHRReponse});
                     } else {
-                        Events.fire('MartinDines_AjaxCompare_ggetSidebarCompare_Failure');
+                        Events.fire('MartinDines_AjaxCompare_getSidebarCompare_Failure');
                     }
                 }
             }
         },
 
-        init: function() {
+        extendSettings: function(options) {
+            for (var key in options) {
+                if (options.hasOwnProperty(key)) {
+                    this.settings[key] = options[key];
+                }
+            }
+        },
+
+        addClickToAddAnchors: function() {
+            // @todo IE 7 & 8 do not support getElementsByClassName() .. Support those guys or not? TBD
+            var anchors = document.getElementsByTagName('a');
+            for (var i = 0; i < anchors.length; i++) {
+                var anchor = anchors[i];
+                if ((/\blink-compare\b/).match(anchor.className)) {
+                    anchor.onclick = AjaxCompare.addProductToCompare;
+                }
+            }
+        },
+
+        addAnchorsToSidebarCompare: function() {
+            // @todo IE 7 & 8 do not support getElementsByClassName() .. Support those guys or not? TBD
+            var divs = document.getElementsByTagName('div');
+            for (var i = 0; i < divs.length; i++) {
+                var div = divs[i];
+                if ((/\bblock-compare\b/).match(div.className)) {
+
+                    var anchors = div.getElementsByTagName('a');
+                    for (var i = 0; i < anchors.length; i++) {
+                        var anchor = anchors[i];
+                        if (anchor.className === '') {
+                            if (anchor.parentNode.className === 'actions') {
+                                // @todo Work out how to assign a method with arguments
+                                // IE: removeAllProductsFromCompare(true) without it calling back on itself
+                                anchor.onclick = AjaxCompare.removeAllProductsFromCompare;
+                            }
+                        }
+                        if ((/\bbtn-remove\b/).match(anchor.className)) {
+                            anchor.onclick = AjaxCompare.removeProductFromCompare;
+                        }
+                    }
+
+                    break;
+                }
+            }
+        },
+
+        init: function(options) {
             var Events = Event_Handler;
-            var URL = sidebar_compare_ajax_url;
             var AjaxCompare = this;
+
+            this.extendSettings(options);
 
             // When a product has been added to compare update messages via ajax
             Events.addListener('MartinDines_AjaxCompare_addProductToCompare_Success', function() {
+                AjaxCompare.getMessages();
+            });
+
+            // When a product has been removed from compare update messages via ajax
+            Events.addListener('MartinDines_AjaxCompare_removeProductFromCompare_Success', function() {
+                AjaxCompare.getMessages();
+            });
+
+            Events.addListener('MartinDines_AjaxCompare_removeAllProductsFromCompare_Success', function() {
                 AjaxCompare.getMessages();
             });
 
@@ -208,6 +320,7 @@ MartinDines.AjaxCompare = (function() {
             });
 
             // When messages request returns data - get sidebar compare data
+            // This may not be desirable as we might want to getMessages without reloading sidebar
             Events.addListener('MartinDines_AjaxCompare_getMessages_Success', function() {
                 AjaxCompare.getSidebarCompare();
             });
@@ -224,21 +337,29 @@ MartinDines.AjaxCompare = (function() {
                         if ((/\bblock-compare\b/).match(div.className)) { // @todo AjaxCompare.getSidebarCompareContainerElement()
                             var responseContainer = document.createElement('div');
                             responseContainer.innerHTML = blockHtml;
-                            div.innerHTML = blockHtml;
+
+                            // Clear before we append elements
+                            div.innerHTML = '';
+
+                            // We're going to assume blockHtml contains a single node, which is block-compare div
+                            if (blockNode = responseContainer.childNodes[0]) {
+                                for (var j = 0; j < blockNode.childNodes.length; j++) {
+                                    var childNode = blockNode.childNodes[j];
+                                    div.appendChild(childNode.cloneNode(true));
+                                }
+                                // @todo Find solution: As cloneNode doesnt execute <script>s that it imports, we do it manually below
+                                decorateList('compare-items');
+                            }
                             break;
-                        }
+                        }   
                     }
+                    // Reattach events to possible new items in compare
+                    AjaxCompare.addAnchorsToSidebarCompare();
                 }
             });
 
-            // @todo IE 7 & 8 do not support getElementsByClassName() .. Support those guys or not? TBD
-            var anchors = document.getElementsByTagName('a');
-            for (var i = 0; i < anchors.length; i++) {
-                var anchor = anchors[i];
-                if ((/\blink-compare\b/).match(anchor.className)) {
-                    anchor.onclick = AjaxCompare.addProductToCompare;
-                }
-            }
+            AjaxCompare.addClickToAddAnchors();
+            AjaxCompare.addAnchorsToSidebarCompare();
         }
     };
 })();
