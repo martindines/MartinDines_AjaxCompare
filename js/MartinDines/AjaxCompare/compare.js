@@ -93,7 +93,7 @@ MartinDines.AjaxCompare = (function() {
         },
 
         getXHRHandler: function() {
-        return XHR_Handler;
+            return XHR_Handler;
         },
 
         setXHRHandler: function(handler) {
@@ -174,6 +174,8 @@ MartinDines.AjaxCompare = (function() {
             XHR.open('POST', element.href, true);
             XHR.setRequestHeader("X-Requested-With", "XMLHttpRequest");
             XHR.send();
+
+            console.log(element.onclick);
 
             console.log(element.href);
             XHR.onreadystatechange = function() {
@@ -289,6 +291,34 @@ MartinDines.AjaxCompare = (function() {
             }
         },
 
+        addAnchorsToCompareTable: function() {
+            // This doesnt seem to work..........gfd,dfsfjsdhjkdsf blergh
+
+            // override the removeItem function created by default magento
+            window.removeItem = function(url) {
+                console.log(url);
+                var eventTriggerElem = window.event.srcElement;
+                if (eventTriggerElem) {
+                    eventTriggerElem.href = url;
+                    eventTriggerElem.onclick = AjaxCompare.removeProductFromCompare;
+                    //eventTriggerElem.onclick();
+                }
+                return false;
+            }
+/*
+            var compare_table = document.getElementById('product_comparison');
+            if (compare_table) {
+                var anchors = compare_table.getElementsByTagName('a');
+                for (var i = 0; i < anchors.length; i++) {
+                    var anchor = anchors[i];
+                    if ((/\bbtn-remove\b/).match(anchor.className)) {
+                        console.log(window.removeItem);
+                        anchor.onclick = AjaxCompare.removeProductFromCompare;
+                    }
+                }
+            }*/
+        },
+
         init: function(options) {
             var Events = Event_Handler;
             var AjaxCompare = this;
@@ -302,6 +332,8 @@ MartinDines.AjaxCompare = (function() {
 
             // When a product has been removed from compare update messages via ajax
             Events.addListener('MartinDines_AjaxCompare_removeProductFromCompare_Success', function() {
+                console.log(document.getElementsByClassName('catalog-product-compare-index'));
+                return;
                 AjaxCompare.getMessages();
             });
 
@@ -351,7 +383,7 @@ MartinDines.AjaxCompare = (function() {
                                 decorateList('compare-items');
                             }
                             break;
-                        }   
+                        }
                     }
                     // Reattach events to possible new items in compare
                     AjaxCompare.addAnchorsToSidebarCompare();
@@ -360,6 +392,7 @@ MartinDines.AjaxCompare = (function() {
 
             AjaxCompare.addClickToAddAnchors();
             AjaxCompare.addAnchorsToSidebarCompare();
+            AjaxCompare.addAnchorsToCompareTable();
         }
     };
 })();
