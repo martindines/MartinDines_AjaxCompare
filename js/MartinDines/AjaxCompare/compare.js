@@ -1,10 +1,15 @@
+/**
+ * @category    MartinDines
+ * @package     MartinDines_AjaxCompare
+ * @author      Martin Dines <martin.dines@live.co.uk>
+ */
 /*
     namespace MartinDines
  */
 var MartinDines = MartinDines || {};
 
 /*
-    namespace MartinDines.events
+    module MartinDines.events
 
     I had an issue with sessions being locked when multiple ajax requests were sent. A work around has been written
     but ideally a queue system for events would be good
@@ -79,7 +84,7 @@ MartinDines.utils.XMLHttpRequest = (function() {
 })(MartinDines.events.XMLHttpRequest || {});
 
 /*
-    namespace MartinDines.AjaxCompare
+    module MartinDines.AjaxCompare
  */
 MartinDines.AjaxCompare = (function() {
     var XHR_Handler, Event_Handler;
@@ -87,9 +92,9 @@ MartinDines.AjaxCompare = (function() {
     return {
         settings: {
             message_ajax_url: location.protocol + "//" + location.host + '/catalog/product_compare/get_messages',
-            message_container_id: 'messages-container',
             sidebar_compare_ajax_url: location.protocol + "//" + location.host + '/catalog/product_compare/get_sidebar_compare',
-            sidebar_compare_container_class: 'block-compare'
+            message_container_id: 'messages-container',
+            sidebar_compare_container_id: 'compare-sidebar-container'
         },
 
         getXHRHandler: function() {
@@ -155,7 +160,7 @@ MartinDines.AjaxCompare = (function() {
                 if (this.readyState == 3) { console.log('request in progress'); }
                 if (this.readyState == 4) {
                     // JSON is ie8+ .. check how magento handles responses and use their method
-                    var XHRResponse = JSON.parse(this.responseText)
+                    var XHRResponse = JSON.parse(this.responseText);
                     if ((this.status == 200) && (XHRResponse.success == true)) {
                         Events.fire({type: 'MartinDines_AjaxCompare_addProductToCompare_Success', data: XHRResponse});
                     } else {
@@ -175,15 +180,13 @@ MartinDines.AjaxCompare = (function() {
             XHR.setRequestHeader("X-Requested-With", "XMLHttpRequest");
             XHR.send();
 
-            console.log(element.onclick);
-
             console.log(element.href);
             XHR.onreadystatechange = function() {
                 if (this.readyState == 2) { console.log('request made, headers available'); }
                 if (this.readyState == 3) { console.log('request in progress'); }
                 if (this.readyState == 4) {
                     // JSON is ie8+ .. check how magento handles responses and use their method
-                    var XHRResponse = JSON.parse(this.responseText)
+                    var XHRResponse = JSON.parse(this.responseText);
                     if ((this.status == 200) && (XHRResponse.success == true)) {
                         Events.fire({type: 'MartinDines_AjaxCompare_removeProductFromCompare_Success', data: XHRResponse});
                     } else {
@@ -210,7 +213,7 @@ MartinDines.AjaxCompare = (function() {
                 if (this.readyState == 3) { console.log('request in progress'); }
                 if (this.readyState == 4) {
                     // JSON is ie8+ .. check how magento handles responses and use their method
-                    var XHRResponse = JSON.parse(this.responseText)
+                    var XHRResponse = JSON.parse(this.responseText);
                     if ((this.status == 200) && (XHRResponse.success == true)) {
                         Events.fire({type: 'MartinDines_AjaxCompare_removeAllProductsFromCompare_Success', data: XHRResponse});
                     } else {
@@ -265,58 +268,24 @@ MartinDines.AjaxCompare = (function() {
         },
 
         addAnchorsToSidebarCompare: function() {
-            // @todo IE 7 & 8 do not support getElementsByClassName() .. Support those guys or not? TBD
-            var divs = document.getElementsByTagName('div');
-            for (var i = 0; i < divs.length; i++) {
-                var div = divs[i];
-                if ((/\bblock-compare\b/).match(div.className)) {
-
-                    var anchors = div.getElementsByTagName('a');
-                    for (var i = 0; i < anchors.length; i++) {
-                        var anchor = anchors[i];
-                        if (anchor.className === '') {
-                            if (anchor.parentNode.className === 'actions') {
-                                // @todo Work out how to assign a method with arguments
-                                // IE: removeAllProductsFromCompare(true) without it calling back on itself
-                                anchor.onclick = AjaxCompare.removeAllProductsFromCompare;
-                            }
-                        }
-                        if ((/\bbtn-remove\b/).match(anchor.className)) {
-                            anchor.onclick = AjaxCompare.removeProductFromCompare;
-                        }
+            var sidebar_compare_container = AjaxCompare.getSidebarCompareContainerElement();
+            if (sidebar_compare_container) {
+                var anchors = sidebar_compare_container.getElementsByTagName('a');
+                for (var i = 0; i < anchors.length; i++) {
+                    var anchor = anchors[i];
+                    console.log(anchor.className);
+                    if ((/\bbtn-remove-all\b/).match(anchor.className)) {
+                        anchor.onclick = AjaxCompare.removeAllProductsFromCompare;
                     }
-
-                    break;
+                    if ((/\bbtn-remove\b/).match(anchor.className)) {
+                        anchor.onclick = AjaxCompare.removeProductFromCompare;
+                    }
                 }
             }
         },
 
         addAnchorsToCompareTable: function() {
-            // This doesnt seem to work..........gfd,dfsfjsdhjkdsf blergh
-
-            // override the removeItem function created by default magento
-            window.removeItem = function(url) {
-                console.log(url);
-                var eventTriggerElem = window.event.srcElement;
-                if (eventTriggerElem) {
-                    eventTriggerElem.href = url;
-                    eventTriggerElem.onclick = AjaxCompare.removeProductFromCompare;
-                    //eventTriggerElem.onclick();
-                }
-                return false;
-            }
-/*
-            var compare_table = document.getElementById('product_comparison');
-            if (compare_table) {
-                var anchors = compare_table.getElementsByTagName('a');
-                for (var i = 0; i < anchors.length; i++) {
-                    var anchor = anchors[i];
-                    if ((/\bbtn-remove\b/).match(anchor.className)) {
-                        console.log(window.removeItem);
-                        anchor.onclick = AjaxCompare.removeProductFromCompare;
-                    }
-                }
-            }*/
+            // @todo Would it be an improvement to rewrite current magento functionality on product_compare/index?
         },
 
         init: function(options) {
@@ -332,8 +301,6 @@ MartinDines.AjaxCompare = (function() {
 
             // When a product has been removed from compare update messages via ajax
             Events.addListener('MartinDines_AjaxCompare_removeProductFromCompare_Success', function() {
-                console.log(document.getElementsByClassName('catalog-product-compare-index'));
-                return;
                 AjaxCompare.getMessages();
             });
 
@@ -362,27 +329,22 @@ MartinDines.AjaxCompare = (function() {
                 var blockHtml = event.data;
                 console.log(event);
                 if (blockHtml) {
-                    var divs = document.getElementsByTagName('div');
-                    for (var i = 0; i < divs.length; i++) {
-                        var div = divs[i];
-                        // @todo revisit because the below does not replace as expected
-                        if ((/\bblock-compare\b/).match(div.className)) { // @todo AjaxCompare.getSidebarCompareContainerElement()
-                            var responseContainer = document.createElement('div');
-                            responseContainer.innerHTML = blockHtml;
+                    var sidebar_compare_container = AjaxCompare.getSidebarCompareContainerElement();
+                    if (sidebar_compare_container) {
+                        var responseContainer = document.createElement('div');
+                        responseContainer.innerHTML = blockHtml;
 
-                            // Clear before we append elements
-                            div.innerHTML = '';
+                        // Clear before we append elements
+                        sidebar_compare_container.innerHTML = '';
 
-                            // We're going to assume blockHtml contains a single node, which is block-compare div
-                            if (blockNode = responseContainer.childNodes[0]) {
-                                for (var j = 0; j < blockNode.childNodes.length; j++) {
-                                    var childNode = blockNode.childNodes[j];
-                                    div.appendChild(childNode.cloneNode(true));
-                                }
-                                // @todo Find solution: As cloneNode doesnt execute <script>s that it imports, we do it manually below
-                                decorateList('compare-items');
+                        // We're going to assume blockHtml contains a single node, which is block-compare div
+                        if (blockNode = responseContainer.childNodes[0]) {
+                            for (var j = 0; j < blockNode.childNodes.length; j++) {
+                                var childNode = blockNode.childNodes[j];
+                                sidebar_compare_container.appendChild(childNode.cloneNode(true));
                             }
-                            break;
+                            // @todo Find solution: As cloneNode doesnt execute <script>s that it imports, we do it manually below
+                            decorateList('compare-items');
                         }
                     }
                     // Reattach events to possible new items in compare
@@ -407,6 +369,7 @@ var AjaxCompare = MartinDines.AjaxCompare;
 AjaxCompare.setEventHandler(EventHandler);
 AjaxCompare.setXHRHandler(XHRHandler);
 
+// @todo Replace with a more reliable way of detecting finished DOM load
 window.onload = function() {
     AjaxCompare.init();
 }
