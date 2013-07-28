@@ -1,6 +1,0 @@
-.idea
-# Installed by composer
-/app/code/community/Aoe/TemplateHints
-/app/etc/modules/Aoe_TemplateHints.xml
-/skin/frontend/base/default/aoe_templatehints
-/vendor
