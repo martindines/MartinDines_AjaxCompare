@@ -1,0 +1,5 @@
+app/etc/modules/MartinDines_AjaxCompare.xml app/etc/modules/MartinDines_AjaxCompare.xml
+app/code/local/MartinDines/AjaxCompare app/code/local/MartinDines/AjaxCompare
+app/design/frontend/base/default/layout/martindines_ajaxcompare.xml app/design/frontend/base/default/layout/martindines_ajaxcompare.xml
+app/design/frontend/base/default/template/martindines_ajaxcompare app/design/frontend/base/default/template/martindines_ajaxcompare
+js/MartinDines js/MartinDines

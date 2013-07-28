@@ -1,18 +1,15 @@
 {
-	"minimum-stability": "dev",
-	"require": {
-		"phpunit/phpunit": "3.*",
-		"n98/magerun": "*",
-		"twig/twig": "1.*",
-		"fbrnc/aoe_templatehints": "dev-master"
-	},
-	"repositories": [
-		{
-			"type": "composer",
-			"url": "http://packages.firegento.com"
-		}
-	],
-	"extra": {
-		"magento-root-dir": "./"
-	}
+    "name": "martindines/ajaxcompare",
+    "description": "MartinDines AjaxCompare magento module",
+    "minimum-stability": "dev",
+    "type": "magento-module",
+    "require": {
+        "magento-hackathon/magento-composer-installer": "dev-master"
+    },
+    "authors": [
+        {
+            "name": "Martin Dines",
+            "email": "martin.dines@live.co.uk"
+        }
+    ]
 }
