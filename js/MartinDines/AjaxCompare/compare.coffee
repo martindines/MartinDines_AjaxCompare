@@ -4,6 +4,38 @@
 @author      Martin Dines <martin.dines@live.co.uk>
 ###
 
+class DomInterface
+    constructor: ->
+        return
+
+    addClickToAddAnchors: ->
+        # @todo IE 7 & 8 do not support getElementsByClassName() .. Support those guys or not? TBD
+        anchors = document.getElementsByTagName("a")
+        i = 0
+
+        while i < anchors.length
+            anchor = anchors[i]
+            anchor.onclick = AjaxCompare.addProductToCompare  if (/\blink-compare\b/).match(anchor.className)
+            i++
+
+    addAnchorsToSidebarCompare: ->
+        sidebar_compare_container = AjaxCompare.getSidebarCompareContainerElement()
+        if sidebar_compare_container
+            anchors = sidebar_compare_container.getElementsByTagName("a")
+            i = 0
+
+            while i < anchors.length
+                anchor = anchors[i]
+                console.log anchor.className
+                anchor.onclick = AjaxCompare.removeAllProductsFromCompare  if (/\bbtn-remove-all\b/).match(anchor.className)
+                anchor.onclick = AjaxCompare.removeProductFromCompare  if (/\bbtn-remove\b/).match(anchor.className)
+                i++
+
+    addAnchorsToCompareTable: ->
+        return
+
+
+###
 #
 #    namespace MartinDines
 # 
@@ -271,7 +303,6 @@ MartinDines.AjaxCompare = (->
         message_container = AjaxCompare.getMessageContainerElement()
         message_container.innerHTML = messageHtml
 
-
     # When messages request returns data - get sidebar compare data
     # This may not be desirable as we might want to getMessages without reloading sidebar
     Events.addListener "MartinDines_AjaxCompare_getMessages_Success", ->
@@ -323,3 +354,5 @@ AjaxCompare.setXHRHandler XHRHandler
 # @todo Replace with a more reliable way of detecting finished DOM load
 window.onload = ->
   AjaxCompare.init()
+
+###
